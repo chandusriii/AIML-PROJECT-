@@ -7,11 +7,12 @@ from typing import Dict, List
 from openai import OpenAI
 
 
-def _build_context(hits: List[Dict]) -> str:
+def _build_context(hits: List[Dict], max_chars_per_chunk: int = 700) -> str:
     blocks = []
     for i, h in enumerate(hits, start=1):
+        snippet = h["text"][:max_chars_per_chunk].strip()
         blocks.append(
-            f"[{i}] Source={h['source']} Page={h['page']}\n{h['text']}"
+            f"[{i}] Source={h['source']} Page={h['page']}\n{snippet}"
         )
     return "\n\n".join(blocks)
 
@@ -54,13 +55,19 @@ def answer_question(
     hits: List[Dict],
     mode: str = "ollama",
     ollama_model: str = "llama3.2:3b",
+    max_chars_per_chunk: int = 700,
 ) -> str:
     if mode == "local":
         return _local_fallback_answer(question, hits)
 
     if mode == "ollama":
         try:
-            return _answer_with_ollama(question, hits, ollama_model)
+            compact_hits = []
+            for h in hits:
+                c = h.copy()
+                c["text"] = c["text"][:max_chars_per_chunk]
+                compact_hits.append(c)
+            return _answer_with_ollama(question, compact_hits, ollama_model)
         except (urllib.error.URLError, TimeoutError, OSError):
             return _local_fallback_answer(question, hits)
 
@@ -69,7 +76,7 @@ def answer_question(
         return _local_fallback_answer(question, hits)
 
     client = OpenAI(api_key=api_key)
-    context = _build_context(hits)
+    context = _build_context(hits, max_chars_per_chunk=max_chars_per_chunk)
     prompt = (
         "Answer the question using only the context below. "
         "If not found, say you do not know. Include bracket citations like [1], [2].\n\n"

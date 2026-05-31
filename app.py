@@ -20,13 +20,22 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
 with st.sidebar:
+    st.header("Performance")
+    perf_mode = st.selectbox(
+        "Speed profile",
+        options=["fast", "accurate"],
+        index=0,
+        help="Fast is quicker with shorter context and fewer retrieved chunks.",
+    )
+
     st.header("Answer Mode")
     answer_mode = st.selectbox(
         "Choose response backend",
         options=["ollama", "openai", "local"],
         index=0,
     )
-    ollama_model = st.text_input("Ollama model", value="llama3.2:3b")
+    default_model = "phi3:mini" if perf_mode == "fast" else "llama3.2:3b"
+    ollama_model = st.text_input("Ollama model", value=default_model)
 
     st.header("0) Quick Demo Loader")
     demo_pdf_path = st.text_input(
@@ -84,12 +93,15 @@ if st.button("Get Answer", type="primary"):
         st.warning("Please enter a question.")
     else:
         try:
-            hits = store.search(query, top_k=TOP_K)
+            top_k = 2 if perf_mode == "fast" else TOP_K
+            max_chars_per_chunk = 420 if perf_mode == "fast" else 900
+            hits = store.search(query, top_k=top_k)
             answer = answer_question(
                 query,
                 hits,
                 mode=answer_mode,
                 ollama_model=ollama_model,
+                max_chars_per_chunk=max_chars_per_chunk,
             )
             st.session_state.chat_history.append(
                 {
