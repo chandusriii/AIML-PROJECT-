@@ -24,6 +24,7 @@ Tip: replace this with a real screenshot or GIF after running the app.
 - Sentence Transformers (`all-MiniLM-L6-v2`) for embeddings
 - FAISS (vector similarity search)
 - OpenAI API (optional answer synthesis)
+- Ollama (free local model inference)
 
 ## What's New in V2
 
@@ -67,7 +68,16 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-3. (Optional) Set OpenAI API key for stronger synthesized answers:
+3. Choose one answer backend:
+
+Option A: Ollama (free, local, recommended)
+
+```powershell
+ollama pull llama3.2:3b
+ollama serve
+```
+
+Option B: OpenAI API
 
 ```powershell
 $env:OPENAI_API_KEY="your_api_key_here"
@@ -88,5 +98,6 @@ streamlit run app.py
 ## Notes
 
 - Without `OPENAI_API_KEY`, the app still works and returns relevant cited excerpts.
+- Sidebar `Answer Mode` supports `ollama`, `openai`, and `local`.
 - Built index is stored in `storage/` and ignored in git.
 - License: MIT

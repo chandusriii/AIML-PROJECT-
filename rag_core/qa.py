@@ -1,4 +1,7 @@
 import os
+import json
+import urllib.request
+import urllib.error
 from typing import Dict, List
 
 from openai import OpenAI
@@ -21,11 +24,46 @@ def _local_fallback_answer(question: str, hits: List[Dict]) -> str:
         snippet = h["text"][:280].strip()
         lines.append(f"[{i}] {snippet} ({h['source']}, page {h['page']})")
     lines.append("")
-    lines.append("Set OPENAI_API_KEY for a stronger synthesized answer.")
+    lines.append("Set OLLAMA/OpenAI mode for a stronger synthesized answer.")
     return "\n".join(lines)
 
 
-def answer_question(question: str, hits: List[Dict]) -> str:
+def _answer_with_ollama(question: str, hits: List[Dict], model: str) -> str:
+    context = _build_context(hits)
+    prompt = (
+        "Answer the question using only the context below. "
+        "If not found, say you do not know. Include bracket citations like [1], [2].\n\n"
+        f"Context:\n{context}\n\nQuestion: {question}"
+    )
+    payload = json.dumps(
+        {"model": model, "prompt": prompt, "stream": False}
+    ).encode("utf-8")
+    req = urllib.request.Request(
+        "http://localhost:11434/api/generate",
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=120) as resp:
+        data = json.loads(resp.read().decode("utf-8"))
+    return data.get("response", "").strip()
+
+
+def answer_question(
+    question: str,
+    hits: List[Dict],
+    mode: str = "ollama",
+    ollama_model: str = "llama3.2:3b",
+) -> str:
+    if mode == "local":
+        return _local_fallback_answer(question, hits)
+
+    if mode == "ollama":
+        try:
+            return _answer_with_ollama(question, hits, ollama_model)
+        except (urllib.error.URLError, TimeoutError, OSError):
+            return _local_fallback_answer(question, hits)
+
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         return _local_fallback_answer(question, hits)
@@ -37,9 +75,12 @@ def answer_question(question: str, hits: List[Dict]) -> str:
         "If not found, say you do not know. Include bracket citations like [1], [2].\n\n"
         f"Context:\n{context}\n\nQuestion: {question}"
     )
-    response = client.responses.create(
-        model="gpt-4.1-mini",
-        input=prompt,
-        temperature=0.2,
-    )
-    return response.output_text.strip()
+    try:
+        response = client.responses.create(
+            model="gpt-4.1-mini",
+            input=prompt,
+            temperature=0.2,
+        )
+        return response.output_text.strip()
+    except Exception:
+        return _local_fallback_answer(question, hits)

@@ -20,6 +20,14 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
 with st.sidebar:
+    st.header("Answer Mode")
+    answer_mode = st.selectbox(
+        "Choose response backend",
+        options=["ollama", "openai", "local"],
+        index=0,
+    )
+    ollama_model = st.text_input("Ollama model", value="llama3.2:3b")
+
     st.header("0) Quick Demo Loader")
     demo_pdf_path = st.text_input(
         "Local PDF path for one-click demo load",
@@ -77,7 +85,12 @@ if st.button("Get Answer", type="primary"):
     else:
         try:
             hits = store.search(query, top_k=TOP_K)
-            answer = answer_question(query, hits)
+            answer = answer_question(
+                query,
+                hits,
+                mode=answer_mode,
+                ollama_model=ollama_model,
+            )
             st.session_state.chat_history.append(
                 {
                     "question": query,
