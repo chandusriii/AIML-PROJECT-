@@ -1,0 +1,92 @@
+﻿# RAG Chat with Your PDFs
+
+A lightweight Retrieval-Augmented Generation (RAG) app that lets you:
+
+- Upload PDF files
+- Build embeddings + FAISS vector index
+- Ask questions and get answers with source citations
+- Keep chat history across multiple questions in one session
+
+## Demo
+
+![Demo placeholder](assets/demo-placeholder.svg)
+
+Tip: replace this with a real screenshot or GIF after running the app.
+
+## Suggested GitHub Topics
+
+`rag` `pdf-chat` `streamlit` `faiss` `sentence-transformers` `openai` `retrieval-augmented-generation` `nlp` `aiml-project`
+
+## Tech Stack
+
+- Streamlit (UI)
+- PyPDF (text extraction)
+- Sentence Transformers (`all-MiniLM-L6-v2`) for embeddings
+- FAISS (vector similarity search)
+- OpenAI API (optional answer synthesis)
+
+## What's New in V2
+
+- Hybrid ranking: semantic similarity + lexical overlap
+- Diversity-aware citation selection (avoids repeating same page)
+- Session chat history and one-click clear history
+
+## Project Structure
+
+```text
+rag-pdf-chat/
+|- app.py
+|- requirements.txt
+|- LICENSE
+|- .gitignore
+|- assets/
+|  |- demo-placeholder.svg
+|- app/
+|  |- config.py
+|  |- pdf_utils.py
+|  |- chunking.py
+|  |- vector_store.py
+|  `- qa.py
+|- data/
+|  `- uploads/
+`- storage/
+```
+
+## Quickstart
+
+1. Create and activate a virtual environment:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+2. Install dependencies:
+
+```powershell
+pip install -r requirements.txt
+```
+
+3. (Optional) Set OpenAI API key for stronger synthesized answers:
+
+```powershell
+$env:OPENAI_API_KEY="your_api_key_here"
+```
+
+4. Run app:
+
+```powershell
+streamlit run app.py
+```
+
+5. In the app:
+- Upload PDFs
+- Click `Save Uploaded PDFs`
+- Click `Build Index`
+- Ask questions
+
+## Notes
+
+- Without `OPENAI_API_KEY`, the app still works and returns relevant cited excerpts.
+- Built index is stored in `storage/` and ignored in git.
+- License: MIT

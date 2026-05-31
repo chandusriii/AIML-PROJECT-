@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+storage/index.faiss
+storage/metadata.json
+data/uploads/*
+!data/uploads/.gitkeep
