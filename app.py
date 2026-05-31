@@ -3,11 +3,11 @@ import shutil
 
 import streamlit as st
 
-from app.chunking import chunk_pages
-from app.config import TOP_K, UPLOADS_DIR
-from app.pdf_utils import extract_pdf_pages
-from app.qa import answer_question
-from app.vector_store import VectorStore
+from rag_core.chunking import chunk_pages
+from rag_core.config import TOP_K, UPLOADS_DIR
+from rag_core.pdf_utils import extract_pdf_pages
+from rag_core.qa import answer_question
+from rag_core.vector_store import VectorStore
 
 st.set_page_config(page_title="RAG Chat with PDFs", page_icon="📚", layout="wide")
 st.title("📚 RAG Chat with Your PDFs")

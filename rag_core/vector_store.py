@@ -7,7 +7,7 @@ import faiss
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-from app.config import EMBED_MODEL_NAME, FAISS_INDEX_PATH, METADATA_PATH, STORAGE_DIR
+from rag_core.config import EMBED_MODEL_NAME, FAISS_INDEX_PATH, METADATA_PATH, STORAGE_DIR
 
 
 class VectorStore:

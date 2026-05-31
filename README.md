@@ -1,4 +1,4 @@
-﻿# RAG Chat with Your PDFs
+# RAG Chat with Your PDFs
 
 A lightweight Retrieval-Augmented Generation (RAG) app that lets you:
 
@@ -41,7 +41,7 @@ rag-pdf-chat/
 |- .gitignore
 |- assets/
 |  |- demo-placeholder.svg
-|- app/
+|- rag_core/
 |  |- config.py
 |  |- pdf_utils.py
 |  |- chunking.py

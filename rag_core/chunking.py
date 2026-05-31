@@ -1,6 +1,6 @@
 from typing import Dict, List
 
-from app.config import CHUNK_OVERLAP, CHUNK_SIZE
+from rag_core.config import CHUNK_OVERLAP, CHUNK_SIZE
 
 
 def chunk_pages(pages: List[Dict]) -> List[Dict]:
