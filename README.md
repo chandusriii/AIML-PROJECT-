@@ -13,6 +13,12 @@ A lightweight Retrieval-Augmented Generation (RAG) app that lets you:
 
 Tip: replace this with a real screenshot or GIF after running the app.
 
+### Live Demo Recording
+
+<video src="assets/demo-screen-recording-2026-05-31.mp4" controls width="900"></video>
+
+Direct link: [demo-screen-recording-2026-05-31.mp4](assets/demo-screen-recording-2026-05-31.mp4)
+
 ## Suggested GitHub Topics
 
 `rag` `pdf-chat` `streamlit` `faiss` `sentence-transformers` `openai` `retrieval-augmented-generation` `nlp` `aiml-project`
